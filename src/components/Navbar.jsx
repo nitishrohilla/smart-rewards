@@ -1,20 +1,35 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { Coins, Gift, Package, User, Menu, LogIn, UserPlus } from 'lucide-react';
+import { Coins, Gift, Package, User, Menu, LogIn, UserPlus, LogOut } from 'lucide-react';
+import { supabase } from '../lib/supabase';
 
 const Navbar = () => {
   const location = useLocation();
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
+  const [session, setSession] = useState(null);
+
+  useEffect(() => {
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      setSession(session);
+    });
+
+    supabase.auth.onAuthStateChange((_event, session) => {
+      setSession(session);
+    });
+  }, []);
 
   const toggleDrawer = () => {
     setIsDrawerOpen(!isDrawerOpen);
+  };
+
+  const handleSignOut = async () => {
+    await supabase.auth.signOut();
   };
 
   const navItems = [
     { path: '/', label: 'Daily Coins', icon: Coins },
     { path: '/products', label: 'Products', icon: Package },
     { path: '/giveaways', label: 'Giveaways', icon: Gift },
-    { path: '/profile', label: 'Profile', icon: User },
   ];
 
   return (
@@ -48,20 +63,34 @@ const Navbar = () => {
                 <span>{label}</span>
               </Link>
             ))}
-            <Link
-              to="/auth/login"
-              className="flex items-center space-x-1 px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-100"
-            >
-              <LogIn className="w-4 h-4" />
-              <span>Login</span>
-            </Link>
-            <Link
-              to="/auth/signup"
-              className="flex items-center space-x-1 px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-100"
-            >
-              <UserPlus className="w-4 h-4" />
-              <span>Signup</span>
-            </Link>
+            {!session ? (
+              <>
+                <Link
+                  to="/auth"
+                  className="flex items-center space-x-1 px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-100"
+                >
+                  <LogIn className="w-4 h-4" />
+                  <span>Sign In</span>
+                </Link>
+              </>
+            ) : (
+              <>
+                <Link
+                  to="/profile"
+                  className="flex items-center space-x-1 px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-100"
+                >
+                  <User className="w-4 h-4" />
+                  <span>Profile</span>
+                </Link>
+                <button
+                  onClick={handleSignOut}
+                  className="flex items-center space-x-1 px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-100"
+                >
+                  <LogOut className="w-4 h-4" />
+                  <span>Logout</span>
+                </button>
+              </>
+            )}
           </div>
         </div>
       </div>
@@ -87,22 +116,37 @@ const Navbar = () => {
               <span>{label}</span>
             </Link>
           ))}
-          <Link
-            to="/auth/login"
-            className="flex items-center space-x-1 px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-100 mb-2"
-            onClick={toggleDrawer} // Close drawer on item click
-          >
-            <LogIn className="w-4 h-4" />
-            <span>Login</span>
-          </Link>
-          <Link
-            to="/auth/signup"
-            className="flex items-center space-x-1 px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-100 mb-2"
-            onClick={toggleDrawer} // Close drawer on item click
-          >
-            <UserPlus className="w-4 h-4" />
-            <span>Signup</span>
-          </Link>
+          {!session ? (
+            <>
+              <Link
+                to="/auth"
+                className="flex items-center space-x-1 px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-100 mb-2"
+                onClick={toggleDrawer} // Close drawer on item click
+              >
+                <LogIn className="w-4 h-4" />
+                <span>Auth</span>
+              </Link>
+            </>
+          ) : (
+            <>
+              <Link
+                to="/profile"
+                className="flex items-center space-x-1 px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-100 mb-2"
+                onClick={toggleDrawer} // Close drawer on item click
+              >
+                <User className="w-4 h-4" />
+                <span>Profile</span>
+              </Link>
+              <button
+                onClick={handleSignOut}
+                className="flex items-center space-x-1 px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-100 mb-2"
+                onClick={toggleDrawer} // Close drawer on item click
+              >
+                <LogOut className="w-4 h-4" />
+                <span>Logout</span>
+              </button>
+            </>
+          )}
         </div>
       </div>
 

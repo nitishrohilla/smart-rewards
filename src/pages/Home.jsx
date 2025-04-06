@@ -3,7 +3,7 @@ import { Coins, Gift, Package, Users } from 'lucide-react';
 
 function Home() {
   return (
-    <div className="max-w-4xl mx-auto">
+    <div className="max-w-4xl mx-auto mt-8">
       <h1 className="text-4xl font-bold text-gray-900 mb-8">Welcome to Rewards Hub</h1>
       
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">

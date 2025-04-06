@@ -1,31 +1,46 @@
-import React from 'react';
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import { Coins, Gift, Package, Users } from 'lucide-react';
-import Navbar from './components/Navbar.jsx';
-import Home from './pages/Home.jsx';
-import Products from './pages/Products.jsx';
-import Giveaways from './pages/Giveaways.jsx';
-import Profile from './pages/Profile.jsx';
-import Auth from './pages/Auth.jsx';
-import Signup from './pages/Signup.jsx';
-import Login from './pages/Login.jsx';
+import React, { useState, useEffect } from 'react';
+import { BrowserRouter as Router, Route, Routes, Link, Navigate } from 'react-router-dom';
+import { supabase } from './lib/supabase';
+import Home from './pages/Home';
+import Products from './pages/Products';
+import Giveaways from './pages/Giveaways';
+import Profile from './pages/Profile';
+import Navbar from './components/Navbar';
+import AdditionalDetailsForm from './components/AdditionalDetailsForm';
+import AuthForm from './components/AuthForm';
 
 function App() {
+  const [session, setSession] = useState(null);
+  const [showAdditionalDetailsForm, setShowAdditionalDetailsForm] = useState(false);
+  const [userId, setUserId] = useState(null);
+
+  useEffect(() => {
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      setSession(session);
+    });
+
+    supabase.auth.onAuthStateChange((_event, session) => {
+      setSession(session);
+    });
+  }, []);
+
   return (
     <Router>
-      <div className="min-h-screen bg-gray-50">
-        <Navbar />
-        <main className="container mx-auto px-4 py-8">
-          <Routes>
-            <Route path="/" element={<Home />} />
-            <Route path="/products" element={<Products />} />
-            <Route path="/giveaways" element={<Giveaways />} />
-            <Route path="/profile" element={<Profile />} />
-            <Route path="/auth" element={<Auth />} />
-            <Route path="/auth/signup" element={<Signup />} />
-            <Route path="/auth/login" element={<Login />} />
-          </Routes>
-        </main>
+      <div className="App">
+        <Navbar session={session} />
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route path="/products" element={<Products />} />
+          <Route path="/giveaways" element={<Giveaways />} />
+          <Route
+            path="/profile"
+            element={session ? <Profile /> : <AuthForm />}
+          />
+          <Route path="/auth" element={session ? <Navigate to="/" /> : <AuthForm />} />
+        </Routes>
+        {showAdditionalDetailsForm && userId && (
+          <AdditionalDetailsForm userId={userId} onUpdate={() => setShowAdditionalDetailsForm(false)} />
+        )}
       </div>
     </Router>
   );
