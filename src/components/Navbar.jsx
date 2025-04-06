@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { Coins, Gift, Package, User, Menu } from 'lucide-react';
+import { Coins, Gift, Package, User, Menu, LogIn, UserPlus } from 'lucide-react';
 
 const Navbar = () => {
   const location = useLocation();
@@ -50,15 +50,17 @@ const Navbar = () => {
             ))}
             <Link
               to="/auth/login"
-              className="px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-100"
+              className="flex items-center space-x-1 px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-100"
             >
-              Login
+              <LogIn className="w-4 h-4" />
+              <span>Login</span>
             </Link>
             <Link
               to="/auth/signup"
-              className="px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-100"
+              className="flex items-center space-x-1 px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-100"
             >
-              Signup
+              <UserPlus className="w-4 h-4" />
+              <span>Signup</span>
             </Link>
           </div>
         </div>
@@ -87,17 +89,19 @@ const Navbar = () => {
           ))}
           <Link
             to="/auth/login"
-            className="px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-100 mb-2"
+            className="flex items-center space-x-1 px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-100 mb-2"
             onClick={toggleDrawer} // Close drawer on item click
           >
-            Login
+            <LogIn className="w-4 h-4" />
+            <span>Login</span>
           </Link>
           <Link
             to="/auth/signup"
-            className="px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-100 mb-2"
+            className="flex items-center space-x-1 px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-100 mb-2"
             onClick={toggleDrawer} // Close drawer on item click
           >
-            Signup
+            <UserPlus className="w-4 h-4" />
+            <span>Signup</span>
           </Link>
         </div>
       </div>
